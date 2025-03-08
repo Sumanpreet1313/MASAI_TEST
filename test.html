@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Layout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .navbar {
+            background-color: white;
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 80%;
+            margin: auto;
+        }
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .navbar nav {
+            display: flex;
+            gap: 20px;
+        }
+        .navbar nav a {
+            text-decoration: none;
+            color: black;
+            font-size: 16px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        .section {
+            margin: 40px 0;
+        }
+        h2{
+            margin-left: 200px;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 50px;
+            justify-content: center;
+            margin-left: 200px;
+        }
+        .grid img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .banner {
+            background-color: black;
+            color: white;
+            padding: 20px;
+        }
+        
+        .membership {
+            background-color: #000;
+            color: white;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .membership a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">Shop Name</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#shop">Shop</a>
+            <a href="#category">Categories</a>
+            <a href="#membership">Membership</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+    
+    <section class="container section" id="shop">
+        <h2>Soulful Bestsellers</h2>
+        <div class="grid">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/uploads/catalog/product/1741341196_7154477.jpg?format=webp&w=360&dpr=1.5" alt="Item 1">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/uploads/catalog/product/1741345234_2786880.jpg?format=webp&w=360&dpr=1.5" alt="Item 2">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/product-images/Korean_Pants-_Rich_Black_6HB7QYB.jpg?format=webp&w=360&dpr=1.5" alt="Item 3">
+        </div>
+    </section>
+    
+    <section class="container section" id="category">
+        <h2>Categories</h2>
+        <div class="grid">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/uploads/catalog/product/1741358933_1028222.jpg?format=webp&w=360&dpr=1.5" alt="Category 1">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/uploads/catalog/product/1739512994_5204844.jpg?format=webp&w=360&dpr=1.5" alt="Category 2">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/product-images/tp8_e5Mgv1F.jpg?format=webp&w=360&dpr=1.5" alt="Category 3">
+        </div>
+    </section>
+    
+    <section class="container section">
+        <h2>Shop by Trend</h2>
+        <div class="grid">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/product-images/Gilmore_Girls-_You_Have_Been_Gilmored.jpg?format=webp&w=360&dpr=1.5" alt="Trend 1">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/product-images/Korean_Pants-_Rich_Black_6HB7QYB.jpg?format=webp&w=360&dpr=1.5" alt="Trend 2">
+            <img src="https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/product-images/Textured_Shirt-_Floral_Bloom_NrAZFe3.jpg?format=webp&w=360&dpr=1.5" alt="Trend 3">
+        </div>
+    </section>
+    
+    <section class="container section">
+        <h2>New Choose List</h2>
+        <img src="https://prod-img.thesouledstore.com/public/theSoul/storage/mobile-cms-media-prod/banner-images/Homepage_banner_1.jpg?format=webp&w=1500&dpr=1.5" alt="Choose List" style="width: 125%;">
+    </section>
+    
+    <section class="membership" id="membership">
+        <h3>MEMBERSHIP PERKS</h3>
+        <p>Exclusive discounts, early access, and special benefits.</p>
+        <a href="#">CLICK TO KNOW MORE</a>
+    </section>
+    
+    <footer class="footer" id="contact">
+        <p style="background-color: red;color:white; height:20px"><strong>HOMEGROWN INDIAN BRAND</strong></p>
+        <p style="background-color: white;color:black">Over 6 Million Happy Customers</p>
+    </footer>
+</body>
+</html>
