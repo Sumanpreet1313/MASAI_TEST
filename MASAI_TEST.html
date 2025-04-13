@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Collaborative Study Notes</title>
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1rem;
+      background: #fff;
+      color: #333;
+      transition: 0.3s;
+    }
+    header, footer {
+      text-align: center;
+      padding: 1rem;
+      background: #f2f2f2;
+      margin-bottom: 1rem;
+    }
+    .dark {
+      background: #121212;
+      color: #ddd;
+    }
+    .dark header, .dark footer {
+      background: #222;
+    }
+    .note {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+    .note img {
+      max-width: 100px;
+      display: block;
+      margin-top: 0.5rem;
+    }
+    input, textarea, select, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      cursor: pointer;
+    }
+    .filter {
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Collaborative Study Notes</h1>
+  <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+</header>
+
+<main>
+  <section>
+    <h2>Create New Note</h2>
+    <input type="text" id="title" placeholder="Title" required />
+    <textarea id="description" placeholder="Description" required></textarea>
+    <select id="priority">
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+    <input type="file" id="image" />
+    <button onclick="addNote()">➕ Add Note</button>
+  </section>
+
+  <hr/>
+
+  <section>
+    <h2>Your Notes</h2>
+    <div class="filter">
+      <label>Filter by Priority:</label>
+      <select id="filterPriority" onchange="loadNotes()">
+        <option value="All">All</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <div id="notesContainer"></div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 Collaborative Study Notes App</p>
+</footer>
+
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // Dark Mode Toggle
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+  }
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+  }
+
+  // Add Note
+  function addNote() {
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const priority = document.getElementById("priority").value;
+    const imageFile = document.getElementById("image").files[0];
+
+    if (!title || !description) {
+      alert("Please fill in the title and description.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const imageUrl = imageFile ? event.target.result : null;
+
+      const note = {
+        title,
+        description,
+        priority,
+        imageUrl,
+        createdAt: new Date().toISOString()
+      };
+
+      // Save to Firebase
+      db.collection("notes").add(note)
+        .then(() => {
+          alert("Note added successfully!");
+          saveToLocalStorage(note);
+          clearForm();
+          loadNotes();
+        });
+    };
+
+    if (imageFile) {
+      reader.readAsDataURL(imageFile);
+    } else {
+      reader.onload();
+    }
+  }
+
+  // Save to LocalStorage
+  function saveToLocalStorage(note) {
+    let notes = JSON.parse(localStorage.getItem("notes")) || [];
+    notes.push(note);
+    localStorage.setItem("notes", JSON.stringify(notes));
+  }
+
+  // Clear form
+  function clearForm() {
+    document.getElementById("title").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("priority").value = "High";
+    document.getElementById("image").value = "";
+  }
+
+  // Load Notes
+  function loadNotes() {
+    const filterPriority = document.getElementById("filterPriority").value;
+    const container = document.getElementById("notesContainer");
+    container.innerHTML = "";
+
+    db.collection("notes").orderBy("createdAt", "desc").get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const note = doc.data();
+          if (filterPriority !== "All" && note.priority !== filterPriority) return;
+          displayNote(doc.id, note, container);
+        });
+      })
+      .catch(() => {
+        // If offline, load from LocalStorage
+        const localNotes = JSON.parse(localStorage.getItem("notes")) || [];
+        localNotes.forEach(note => {
+          if (filterPriority !== "All" && note.priority !== filterPriority) return;
+          displayNote(null, note, container);
+        });
+      });
+  }
+
+  // Display Note
+  function displayNote(id, note, container) {
+    const div = document.createElement("div");
+    div.className = "note";
+    div.innerHTML = `
+      <h3>${note.title}</h3>
+      <p>${note.description}</p>
+      <p><strong>Priority:</strong> ${note.priority}</p>
+      ${note.imageUrl ? `<img src="${note.imageUrl}" />` : ""}
+      <small>${new Date(note.createdAt).toLocaleString()}</small>
+      ${id ? `<button onclick="deleteNote('${id}')">🗑 Delete</button>` : ""}
+    `;
+    container.appendChild(div);
+  }
+
+  // Delete Note
+  function deleteNote(id) {
+    if (confirm("Are you sure you want to delete this note?")) {
+      db.collection("notes").doc(id).delete().then(() => {
+        loadNotes();
+      });
+    }
+  }
+
+  // Initial Load
+  loadNotes();
+</script>
+</body>
+</html>
